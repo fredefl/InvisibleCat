@@ -1,0 +1,104 @@
+<!Doctype html>
+<html>
+<head>
+
+</head>
+<body>
+	<canvas id="canvas" style="width:500px; height:500px; float:left;" width="500" height="500"></canvas>
+	<textarea style="width:512px; height:512px; float:left; margin-left: 10px;" id="log"></textarea>
+	<script>
+		function log (message) {
+			document.getElementById("log").innerHTML += message + "\n";
+		}
+		log("Initializing canvas");
+		//context.getImageData(1, 0, 1, 1).data
+		var canvas = document.getElementById("canvas");
+		var context = canvas.getContext("2d");
+
+		log("#################### WRITING PHASE #######################");
+		log("Setting background");
+		//Background
+		context.fillStyle = "#555";
+		context.fillRect(0, 0, canvas.width, canvas.height);
+
+		log("Initializing variables");
+		var number = "22866315557416369891025162687633222926921714860804552273589715432731620740683502786778026219054770073854976547266101927250568449924845678198184454306277971782089553895953371324379037026040529783503468683343150609304166101725867228540597977299180060918939431868488832810595749297924737215262261688618524160035873459456839583478674389478637583646734586374869367935846919001950309276312352489135477501981178475451096184036236628560991351063912345304173046767589384476128655604657994180644825183636408806192178381490682990834659213698519514548428785133787319925460375754535854037003555701937930158832936474256646721396956641453453439713768417608630190476788270744099327932166638731";
+		var red = 0,
+			green = 0,
+			blue = 0,
+			numberLength = number.length,
+			imageSize = 500,
+			originalNumber = number;
+		var x = 0, y = 0, drawNumber = 0;
+
+		var img = new Image();
+		img.src = 'total-eclipse-of-the-octocat.jpg';
+		img.onload = function(){
+			context.drawImage(img, 0, 0, img.width, img.height);
+			goForIt();
+		};
+		
+	function goForIt () {
+		log("Drawing initiated....");
+		while (number.length > 0) {
+			if(x > imageSize - 1) {
+				x = 0;
+				y++;
+			}
+			red = getChar();
+			green = getChar();
+			blue = getChar();
+			context.fillStyle = "rgba(" + red + ", " + green + ", " + blue + ", 1)";
+			context.fillRect(x, y, 1, 1);
+			x++;
+			drawNumber++;
+		};
+		log("Almost there...");
+		context.fillStyle = "rgba(" + drawNumber.toString()[0] + ", " + drawNumber.toString()[1] + ", " + drawNumber.toString()[2] + ", 1)";
+		context.fillRect(imageSize - 1, imageSize - 1, 1, 1);
+		log("Drawing finished! Stats:");
+		log("Digits stored: " + numberLength)
+		log("Pixels used: " + drawNumber);
+
+		log("#################### READING PHASE #######################");
+		var pixelsUsedCalc = context.getImageData(imageSize - 1, imageSize - 1, 1, 1).data;
+		var pixelsUsed = pixelsUsedCalc[0].toString() + pixelsUsedCalc[1].toString() + pixelsUsedCalc[2].toString();
+		log("Pixels used: " + pixelsUsed);
+
+		x = 0;
+		y = 0;
+		var readingBuffer;
+		var result = "";
+		while (pixelsUsed > 0) {
+			if(x > imageSize - 1) {
+				x = 0;
+				y++;
+			}
+			readingBuffer = context.getImageData(x, y, 1, 1).data;
+			result += (readingBuffer[0] !== 255) ? readingBuffer[0].toString() : "";
+			result += (readingBuffer[1] !== 255) ? readingBuffer[1].toString() : "";
+			result += (readingBuffer[2] !== 255) ? readingBuffer[2].toString() : "";
+			pixelsUsed--;
+			x++;
+		}
+		log("Result: " + result);
+		if (originalNumber === result) {
+			log("#################### SUCCESS ######################");
+		} else {
+			log("#################### FAILURE ######################")
+		}
+		//console.log(context.getImageData(x, y, 1, 1).data);
+		function getChar () {
+			if (number.length > 0) {
+				var string = number[0];
+				number = number.slice(1);
+				return string; 
+			} else {
+				return "255";
+			}
+		}
+	}
+
+	</script>
+</body>
+</html>
